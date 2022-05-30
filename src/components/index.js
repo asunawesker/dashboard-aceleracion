@@ -44,7 +44,8 @@ const HookMqtt = () => {
                 setConnectStatus('Reconnecting');
             });
             client.on('message', (topic, message) => {
-                const payload = { topic, message: message.toString() };
+                let jsonMessage = JSON.parse(message);
+                const payload = { topic, message: message.toString(), acceleration: jsonMessage.aceleracion, pointPlotted: jsonMessage.pointsPlotted };
                 setPayload(payload);
             });
         }
@@ -63,8 +64,8 @@ const HookMqtt = () => {
             const { topic, qos } = subscription;
             client.subscribe(topic, { qos }, (error) => {
                 if (error) {
-                console.log('Subscribe to topics error', error)
-                return
+                    console.log('Subscribe to topics error', error)
+                    return
                 }
                 setIsSub(true)
                 console.info(`Subscribe to topic ${topic}`)

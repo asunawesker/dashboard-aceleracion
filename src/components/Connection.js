@@ -14,7 +14,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
       reconnectPeriod: 1000,
       connectTimeout: 30 * 1000,
       will: {
-        topic: 'WillMsg',
+        topic: 'Connection Will',
         payload: 'Connection Closed abnormally..!',
         qos: 0,
         retain: false
