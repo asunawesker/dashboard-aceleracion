@@ -66,7 +66,7 @@ const HookMqtt = () => {
             client.on('message', (topic, message) => {
                 let jsonMessage = JSON.parse(message);
 
-                if(jsonMessage.aceleracion>=10){
+                if(jsonMessage.aceleracion>=25){
                     console.error(jsonMessage.aceleracion);
                     alertCrashCar();
                 }
