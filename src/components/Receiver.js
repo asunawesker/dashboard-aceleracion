@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, List, Skeleton, Divider } from 'antd';
+import { Card, List } from 'antd';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
     Line,
@@ -15,7 +15,6 @@ const Receiver = ({ payload }) => {
     useEffect(() => {
         if (payload.topic) {            
             setMessages(messages => [...messages, payload])
-            console.log(messages);
         }
     }, [payload]);
       
@@ -32,9 +31,11 @@ const Receiver = ({ payload }) => {
         <Card
             title="Receiver"
         >   
-            <LineChart width={ 700 } height={ 300 } data={ messages }>
-                <XAxis dataKey="pointPlotted"/>
-                <YAxis />
+            <LineChart width={ 700 } height={ 500 } data={ messages }>
+                <XAxis                   
+                    dataKey="pointPlotted"/>
+                <YAxis 
+                    label={{ value: 'Aceleración', angle: -90, position: 'insideLeft' }} />
                 <Line dataKey="acceleration" />
             </LineChart>
             <div
