@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, List } from 'antd';
+import { Card, List, Skeleton, Divider } from 'antd';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import {
     Line,
     LineChart,
@@ -27,7 +28,7 @@ const Receiver = ({ payload }) => {
         </List.Item>
     )
 
-    return (
+    return (        
         <Card
             title="Receiver"
         >   
@@ -36,15 +37,32 @@ const Receiver = ({ payload }) => {
                 <YAxis />
                 <Line dataKey="acceleration" />
             </LineChart>
-            <List
-                size="large"
-                bordered
-                dataSource={messages}
-                renderItem={renderListItem}
-            />  
+            <div
+                id="scrollableDiv"
+                style={{
+                    height: 400,
+                    overflow: 'auto',
+                    padding: '0 16px',
+                    border: '1px solid rgba(140, 140, 140, 0.35)',
+                }}
+            >
+                <InfiniteScroll
+                dataLength={messages.length}
+                next={payload}
+                hasMore={messages.length < 50}
+                scrollableTarget="scrollableDiv"
+            >
+                <List                
+                    bodyStyle={{overflowX: 'scroll'}}
+                    size="large"
+                    bordered
+                    dataSource={messages}
+                    renderItem={renderListItem}
+                />  
+            </InfiniteScroll>    
+            </div>
+                    
         </Card>
-        
-        
     );
 }
 

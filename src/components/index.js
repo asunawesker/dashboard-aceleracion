@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import mqtt from 'mqtt/dist/mqtt';
-import swal from 'sweetalert';
+import Swal from 'sweetalert2'
 
 import Connection from './Connection';
 import Subscriber from './Subscriber';
@@ -48,7 +48,6 @@ const HookMqtt = () => {
                 let jsonMessage = JSON.parse(message);
 
                 if(jsonMessage.aceleracion>=25){
-                    console.error(jsonMessage.aceleracion);
                     alertCrashCar();
                 }
 
@@ -93,10 +92,10 @@ const HookMqtt = () => {
         }
     };
 
-    const mqttPublish = () => {
+    const mqttPublish = (value) => {
         if (client) {
-            const topic = "aceleracion";
-            const payload = "LA AYUDA VA EN CAMINO"
+            const topic = "aceleracionRespuesta";
+            const payload = value;
             
             client.publish(topic, payload, 0, error => {
                 if (error) {
@@ -107,21 +106,41 @@ const HookMqtt = () => {
     };
 
     const alertCrashCar = () =>{
+        /*
         swal({
             title: "ACABAN DE CHOCAR",
             text: "TU CLIENTE ACABA DE CHOCAR",
+            type: "input",
             icon: "warning",
             buttons: true,
             dangerMode: true,
+        })*/
+        Swal.fire({
+            title: "ACABAN DE CHOCAR",
+            input: 'text',
+            inputLabel: 'TU CLIENTE ACABA DE CHOCAR',
+            inputValue: "",
+            icon: "warning",
+            dangerMode: true,
+            showCancelButton: true,
+            inputValidator: (value) => {
+              if (!value) {
+                return '¡Necesitas escribir un mensaje!'
+              }
+              mqttPublish(value);
+            }
         })
         .then((willDelete) => {
             if (willDelete) {
-                swal("Se ha emitido una notificación de rescate a tu cliente", {
+                Swal.fire({
+                    title:"Se ha emitido una notificación de rescate a tu cliente",
                     icon: "success",
-                });
-                mqttPublish();
+                });                
             } else {
-                swal("No se emitió señal de rescate a tu cliente");
+                Swal.fire({
+                    inputLabel:"No se emitió señal de rescate a tu cliente",
+                    icon: "error",
+                }); 
             }
         });
     }
