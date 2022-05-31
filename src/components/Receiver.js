@@ -14,6 +14,7 @@ const Receiver = ({ payload }) => {
     useEffect(() => {
         if (payload.topic) {            
             setMessages(messages => [...messages, payload])
+            console.log(messages);
         }
     }, [payload]);
       
@@ -30,13 +31,13 @@ const Receiver = ({ payload }) => {
         <Card
             title="Receiver"
         >   
-            <LineChart width={5000} height={500} data={messages}>
+            <LineChart width={ 700 } height={ 300 } data={ messages }>
                 <XAxis dataKey="pointPlotted"/>
                 <YAxis />
                 <Line dataKey="acceleration" />
             </LineChart>
             <List
-                size="small"
+                size="large"
                 bordered
                 dataSource={messages}
                 renderItem={renderListItem}
