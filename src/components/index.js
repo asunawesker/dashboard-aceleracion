@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import mqtt from 'mqtt/dist/mqtt';
+import swal from 'sweetalert';
 
 import Connection from './Connection';
 import Subscriber from './Subscriber';
@@ -25,6 +26,25 @@ const HookMqtt = () => {
     const [payload, setPayload] = useState({});
     const [connectStatus, setConnectStatus] = useState('Connect');
 
+    const alertCrashCar = () =>{
+        swal({
+            title: "ACABAN DE CHOCAR",
+            text: "TU CLIENTE ACABA DE CHOCAR",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal("Se ha emitido una notificación de rescate a tu cliente", {
+                    icon: "success",
+                });
+            } else {
+                swal("No se emitió señal de rescate a tu cliente");
+            }
+        });
+    }
+
     const mqttConnect = (host) => {
         setConnectStatus('Connecting');
         setClient(mqtt.connect(host));
@@ -45,6 +65,12 @@ const HookMqtt = () => {
             });
             client.on('message', (topic, message) => {
                 let jsonMessage = JSON.parse(message);
+
+                if(jsonMessage.aceleracion>=10){
+                    console.error(jsonMessage.aceleracion);
+                    alertCrashCar();
+                }
+
                 const payload = { topic, message: message.toString(), acceleration: jsonMessage.aceleracion, pointPlotted: jsonMessage.pointsPlotted };
                 setPayload(payload);
             });
