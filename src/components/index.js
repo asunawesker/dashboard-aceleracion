@@ -24,26 +24,7 @@ const HookMqtt = () => {
     const [client, setClient] = useState(null);
     const [isSubed, setIsSub] = useState(false);
     const [payload, setPayload] = useState({});
-    const [connectStatus, setConnectStatus] = useState('Connect');
-
-    const alertCrashCar = () =>{
-        swal({
-            title: "ACABAN DE CHOCAR",
-            text: "TU CLIENTE ACABA DE CHOCAR",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                swal("Se ha emitido una notificación de rescate a tu cliente", {
-                    icon: "success",
-                });
-            } else {
-                swal("No se emitió señal de rescate a tu cliente");
-            }
-        });
-    }
+    const [connectStatus, setConnectStatus] = useState('Connect');   
 
     const mqttConnect = (host) => {
         setConnectStatus('Connecting');
@@ -110,7 +91,40 @@ const HookMqtt = () => {
             setIsSub(false);
           });
         }
-      };
+    };
+
+    const mqttPublish = () => {
+        if (client) {
+            const topic = "aceleracion";
+            const payload = "LA AYUDA VA EN CAMINO"
+            
+            client.publish(topic, payload, 0, error => {
+                if (error) {
+                    console.log('Publish error: ', error);
+                }
+            });
+        }
+    };
+
+    const alertCrashCar = () =>{
+        swal({
+            title: "ACABAN DE CHOCAR",
+            text: "TU CLIENTE ACABA DE CHOCAR",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal("Se ha emitido una notificación de rescate a tu cliente", {
+                    icon: "success",
+                });
+                mqttPublish();
+            } else {
+                swal("No se emitió señal de rescate a tu cliente");
+            }
+        });
+    }
 
     return (
         <>
