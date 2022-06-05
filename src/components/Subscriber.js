@@ -7,7 +7,7 @@ const Subscriber = ({ sub, unSub, showUnsub }) => {
   const qosOptions = useContext(QosOption);
 
   const record = {
-    topic: 'aceleracion',
+    topic: 'emulador/#',
     qos: 0,
   };
 

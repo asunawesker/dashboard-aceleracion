@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 import Connection from './Connection';
 import Subscriber from './Subscriber';
 import Receiver from './Receiver';
+import DataTable from './DataTable';
 
 export const QosOption = createContext([])
 const qosOption = [
@@ -25,6 +26,9 @@ const HookMqtt = () => {
     const [isSubed, setIsSub] = useState(false);
     const [payload, setPayload] = useState({});
     const [connectStatus, setConnectStatus] = useState('Connect');   
+    let acceleration;
+    let step;
+    let data = 1;
 
     const mqttConnect = (host) => {
         setConnectStatus('Connecting');
@@ -45,14 +49,30 @@ const HookMqtt = () => {
                 setConnectStatus('Reconnecting');
             });
             client.on('message', (topic, message) => {
-                let jsonMessage = JSON.parse(message);
 
-                if(jsonMessage.aceleracion>=25){
-                    alertCrashCar();
+                if (topic === 'emulador/pasos') {
+                    step = JSON.parse(message);
                 }
+                
+                if (topic === 'emulador/aceleracion') {
+                    acceleration = JSON.parse(message);
+                }
+                
+                if(data ==2){
+                    console.log(step);
+                    console.log(acceleration);
+                    data = 0;
 
-                const payload = { topic, message: message.toString(), acceleration: jsonMessage.aceleracion, pointPlotted: jsonMessage.pointsPlotted };
-                setPayload(payload);
+                    if(acceleration.aceleracion>=25){
+                        alertCrashCar();
+                    }
+
+                    const payload = { topic, message: message.toString(), acceleration: acceleration.aceleracion, pointPlotted: step.pointsPlotted };
+                    setPayload(payload);
+                } else {
+                    data++;
+                }
+                
             });
         }
     }, [client]);
@@ -94,7 +114,7 @@ const HookMqtt = () => {
 
     const mqttPublish = (value) => {
         if (client) {
-            const topic = "aceleracionRespuesta";
+            const topic = "cliente/respuesta";
             const payload = value;
             
             client.publish(topic, payload, 0, error => {
@@ -106,15 +126,6 @@ const HookMqtt = () => {
     };
 
     const alertCrashCar = () =>{
-        /*
-        swal({
-            title: "ACABAN DE CHOCAR",
-            text: "TU CLIENTE ACABA DE CHOCAR",
-            type: "input",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })*/
         Swal.fire({
             title: "ACABAN DE CHOCAR",
             input: 'text',
@@ -152,6 +163,7 @@ const HookMqtt = () => {
                 <Subscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
             </QosOption.Provider>
             <Receiver payload={payload}/>
+            <DataTable/>
         </>
     );
 }

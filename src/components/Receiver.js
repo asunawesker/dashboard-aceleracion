@@ -18,7 +18,7 @@ const Receiver = ({ payload }) => {
         }
     }, [payload]);
       
-    const renderListItem = (item) => (
+    const renderListItem = (item) => (        
         <List.Item>
             <List.Item.Meta
                 title={item.topic}

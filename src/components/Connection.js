@@ -5,7 +5,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
       
   const onFinish = () => {
     //ws://34.125.103.25:8083/mqtt
-    const url = `ws://34.125.103.25:8083/mqtt`;
+    const url = `ws://www.grupocarjo.com:8083/mqtt`;
     const options = {
       keepalive: 30,
       protocolId: 'MQTT',
