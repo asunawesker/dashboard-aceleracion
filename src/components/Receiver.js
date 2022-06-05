@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, List } from 'antd';
+import { Card, List, Button } from 'antd';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
     Line,
@@ -18,14 +18,18 @@ const Receiver = ({ payload }) => {
         }
     }, [payload]);
       
-    const renderListItem = (item) => (        
+    const renderListItem = (item) => (           
         <List.Item>
             <List.Item.Meta
-                title={item.topic}
-                description={item.acceleration}
+                title = 'Aceleración'
+                description = {item.acceleration}
             />
         </List.Item>
     )
+
+    const cleanData = () => {
+        setMessages([]);
+    }
 
     return (        
         <Card
@@ -48,21 +52,21 @@ const Receiver = ({ payload }) => {
                 }}
             >
                 <InfiniteScroll
-                dataLength={messages.length}
-                next={payload}
-                hasMore={messages.length < 50}
-                scrollableTarget="scrollableDiv"
-            >
-                <List                
-                    bodyStyle={{overflowX: 'scroll'}}
-                    size="large"
-                    bordered
-                    dataSource={messages}
-                    renderItem={renderListItem}
-                />  
-            </InfiniteScroll>    
-            </div>
-                    
+                    dataLength={messages.length}
+                    next={payload}
+                    hasMore={messages.length < 50}
+                    scrollableTarget="scrollableDiv"
+                >
+                    <List                
+                        bodyStyle={{overflowX: 'scroll'}}
+                        size="large"
+                        bordered
+                        dataSource={messages}
+                        renderItem={renderListItem}
+                    />  
+                </InfiniteScroll>    
+            </div>    
+            <Button type="primary" onClick={cleanData}>Limpiar datos</Button>                
         </Card>
     );
 }

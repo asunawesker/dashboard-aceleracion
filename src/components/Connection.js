@@ -4,8 +4,7 @@ import { Card, Button } from 'antd';
 const Connection = ({ connect, disconnect, connectBtn }) => {
       
   const onFinish = () => {
-    //ws://34.125.103.25:8083/mqtt
-    const url = `ws://www.grupocarjo.com:8083/mqtt`;
+    const url = `ws://34.125.103.25:8083/mqtt`;
     const options = {
       keepalive: 30,
       protocolId: 'MQTT',
@@ -34,12 +33,10 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
 
   return (
     <Card
-      title="Connection"
-      actions={[
-        <Button type="primary" onClick={handleConnect}>{connectBtn}</Button>,
-        <Button danger onClick={handleDisconnect}>Disconnect</Button>
-      ]}
-    >
+      title="Conexión a servidor mqtt"
+    > 
+      <Button type="primary" onClick={handleConnect}>{connectBtn}</Button>
+      <Button danger onClick={handleDisconnect}>Desconectar</Button>
     </Card>
   );
 }

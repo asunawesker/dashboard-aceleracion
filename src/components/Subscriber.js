@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
-import { Card, Form, Input, Row, Col, Button, Select } from 'antd';
-import { QosOption } from './index'
+import { Card, Form, Row, Col, Button, Typography } from 'antd';
+import { QosOption } from './index';
+
+const { Text } = Typography;
 
 const Subscriber = ({ sub, unSub, showUnsub }) => {
   const [form] = Form.useForm();
-  const qosOptions = useContext(QosOption);
 
   const record = {
     topic: 'emulador/#',
@@ -28,22 +29,14 @@ const Subscriber = ({ sub, unSub, showUnsub }) => {
       initialValues={record}
       onFinish={onFinish}
     >
-      <Row gutter={20}>
+      <Row gutter={20}>        
         <Col span={12}>
-          <Form.Item
-            label="Topic"
-            name="topic"
-          >
-            <Input />
-          </Form.Item>
+          <Text strong>Topic: </Text>
+          <Text>{record.topic}</Text>
         </Col>
         <Col span={12}>
-          <Form.Item
-            label="QoS"
-            name="qos"
-          >
-            <Select options={qosOptions} />
-          </Form.Item>
+          <Text strong>QoS: </Text>
+          <Text>{record.qos}</Text>
         </Col>
         <Col span={8} offset={16} style={{ textAlign: 'right' }}>
           <Form.Item>
@@ -65,7 +58,7 @@ const Subscriber = ({ sub, unSub, showUnsub }) => {
 
   return (
     <Card
-      title="Subscriber"
+      title="Recibir información"
     >
       {SubForm}
     </Card>

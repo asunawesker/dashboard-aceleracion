@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
-import { Table, Divider, Tag } from 'antd';
+import { Table, Tag, Button, Card } from 'antd';
 
 function DataTable() {
     const [list, setList] = useState([]);
     
     useEffect(() => {
+        getDataMqttServer();
+    }, [setList]);
+
+    const getDataMqttServer = () => {
         Axios({
-        url: 'https://Alert-mqtt.asunawesker.repl.co/mqtt',
+            url: 'https://Alert-mqtt.asunawesker.repl.co/mqtt',
         })
         .then((response) => {
             setList(response.data);
-            console.log(response.data);
         })
         .catch((error) => {
             console.log(error);
         });
-    }, [setList]);
+    }
 
     let timestampToNormal = (timestamp) => {
         let a = new Date(timestamp * 1000);
@@ -68,9 +71,12 @@ function DataTable() {
     ];
 
     return (
-        <div>
+        <Card
+            title="Información"
+            >
             <Table columns={columns} dataSource={list} />
-        </div>
+            <Button type="primary" onClick={getDataMqttServer}>Actualizar información</Button>
+        </Card>
     );
 }
 

@@ -1,12 +1,14 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext } from 'react';
 import mqtt from 'mqtt/dist/mqtt';
 import Swal from 'sweetalert2'
+import { Typography } from 'antd';
 
 import Connection from './Connection';
 import Subscriber from './Subscriber';
 import Receiver from './Receiver';
 import DataTable from './DataTable';
 
+/*
 export const QosOption = createContext([])
 const qosOption = [
   {
@@ -20,33 +22,55 @@ const qosOption = [
     value: 2,
   },
 ];
+*/
 
 const HookMqtt = () => {
     const [client, setClient] = useState(null);
     const [isSubed, setIsSub] = useState(false);
     const [payload, setPayload] = useState({});
-    const [connectStatus, setConnectStatus] = useState('Connect');   
+    const [connectStatus, setConnectStatus] = useState('Conectar');   
     let acceleration;
     let step;
     let data = 1;
 
     const mqttConnect = (host) => {
-        setConnectStatus('Connecting');
-        setClient(mqtt.connect(host));
+        const url = `ws://34.125.103.25:8083/mqtt`;
+        const options = {
+          keepalive: 30,
+          protocolId: 'MQTT',
+          protocolVersion: 4,
+          clean: true,
+          reconnectPeriod: 1000,
+          connectTimeout: 30 * 1000,
+          will: {
+            topic: 'Connection Will',
+            payload: 'Connection Closed abnormally..!',
+            qos: 0,
+            retain: false
+          },
+          rejectUnauthorized: false
+        };
+
+        setConnectStatus('Conectando');
+        setClient(mqtt.connect(url, options));
     };
+
+    useEffect(() => {
+        mqttConnect();
+    }, []);
 
     useEffect(() => {
         if (client) {
             client.on('connect', () => {
-                setConnectStatus('Connected');
-                console.info('Conectado');
+                setConnectStatus('Conectado');
+                mqttSub();
             });
             client.on('error', (err) => {                
                 client.end();
                 console.error('Connection error: ', err);
             });
             client.on('reconnect', () => {
-                setConnectStatus('Reconnecting');
+                setConnectStatus('Reconectando');
             });
             client.on('message', (topic, message) => {
 
@@ -80,15 +104,16 @@ const HookMqtt = () => {
     const mqttDisconnect = () => {
         if (client) {
             client.end(() => {
-                setConnectStatus('Connect');
+                setConnectStatus('Conectar');
+                setIsSub(false);
             });
         }
     }
     
-    const mqttSub = (subscription) => {
+    const mqttSub = () => {
         if (client) {
-            const { topic, qos } = subscription;
-            client.subscribe(topic, { qos }, (error) => {
+            const topic = 'emulador/#'
+            client.subscribe(topic, 0, (error) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
                     return
@@ -101,14 +126,14 @@ const HookMqtt = () => {
 
     const mqttUnSub = (subscription) => {
         if (client) {
-          const { topic } = subscription;
-          client.unsubscribe(topic, error => {
-            if (error) {
-              console.log('Unsubscribe error', error)
-              return
-            }
-            setIsSub(false);
-          });
+            const { topic } = subscription;
+            client.unsubscribe(topic, error => {
+                if (error) {
+                console.log('Unsubscribe error', error)
+                return
+                }
+                setIsSub(false);
+            });
         }
     };
 
@@ -159,9 +184,9 @@ const HookMqtt = () => {
     return (
         <>
             <Connection connect={mqttConnect} disconnect={mqttDisconnect} connectBtn={connectStatus} />
-            <QosOption.Provider value={qosOption}>
+            {/*<QosOption.Provider value={qosOption}>
                 <Subscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
-            </QosOption.Provider>
+            </QosOption.Provider>*/}
             <Receiver payload={payload}/>
             <DataTable/>
         </>
