@@ -8,8 +8,10 @@ import Subscriber from './Subscriber';
 import Receiver from './Receiver';
 import DataTable from './DataTable';
 
+const { Title } = Typography;
+
 /*
-export const QosOption = createContext([])
+export const QosOption = createContext([]);
 const qosOption = [
   {
     label: '0',
@@ -183,11 +185,12 @@ const HookMqtt = () => {
 
     return (
         <>
+            <Title>Alerta Choque</Title>
             <Connection connect={mqttConnect} disconnect={mqttDisconnect} connectBtn={connectStatus} />
             {/*<QosOption.Provider value={qosOption}>
                 <Subscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
             </QosOption.Provider>*/}
-            <Receiver payload={payload}/>
+            <Receiver payload={payload}/>           
             <DataTable/>
         </>
     );

@@ -10,7 +10,7 @@ import {
 
 const Receiver = ({ payload }) => {
 
-    const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState([]);
 
     useEffect(() => {
         if (payload.topic) {            
