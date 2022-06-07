@@ -22,12 +22,7 @@ function DataTable() {
     }
 
     let timestampToNormal = (timestamp) => {
-        let a = new Date(timestamp * 1000);
-        let months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-        let month = months[a.getMonth()];
-        let date = a.getDate();
-        
-        return date + ' ' + month;
+        return new Date(timestamp).toDateString();
     }
 
     let extractAcceleration = (acceleration) => {

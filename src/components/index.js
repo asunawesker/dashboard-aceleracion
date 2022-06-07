@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 import { Typography } from 'antd';
 
 import Connection from './Connection';
-import Subscriber from './Subscriber';
+//import Subscriber from './Subscriber';
 import Receiver from './Receiver';
 import DataTable from './DataTable';
 
@@ -33,7 +33,6 @@ const HookMqtt = () => {
     const [connectStatus, setConnectStatus] = useState('Conectar');   
     let acceleration;
     let step;
-    let data = 1;
 
     const mqttConnect = (host) => {
         const url = `ws://34.125.103.25:8083/mqtt`;
@@ -47,7 +46,7 @@ const HookMqtt = () => {
           will: {
             topic: 'Connection Will',
             payload: 'Connection Closed abnormally..!',
-            qos: 0,
+            qos: 2,
             retain: false
           },
           rejectUnauthorized: false
@@ -74,34 +73,42 @@ const HookMqtt = () => {
             client.on('reconnect', () => {
                 setConnectStatus('Reconectando');
             });
-            client.on('message', (topic, message) => {
+            client.on('message', (topic, message) => {               
 
-                if (topic === 'emulador/pasos') {
+                if (topic.includes('pasos')) {
                     step = JSON.parse(message);
                 }
                 
-                if (topic === 'emulador/aceleracion') {
+                if (topic.includes('aceleracion')) {
                     acceleration = JSON.parse(message);
                 }
                 
-                if(data ==2){
-                    console.log(step);
-                    console.log(acceleration);
-                    data = 0;
-
+                if(acceleration !== undefined && step !== undefined){
                     if(acceleration.aceleracion>=25){
                         alertCrashCar();
                     }
-
-                    const payload = { topic, message: message.toString(), acceleration: acceleration.aceleracion, pointPlotted: step.pointsPlotted };
+                    const payload = { 
+                        topic, 
+                        message: message.toString(), 
+                        acceleration: acceleration.aceleracion, 
+                        pointPlotted: step.pointsPlotted, 
+                        client: extractClient(topic)
+                    };
                     setPayload(payload);
-                } else {
-                    data++;
+                    step = undefined;
+                    acceleration = undefined;
                 }
                 
             });
         }
-    }, [client]);
+    }, [client]);    
+    
+    const extractClient = (topic) => {
+        return topic.substring(
+            topic.indexOf("/") + 1, 
+            topic.lastIndexOf("/")
+        );
+    }
 
     const mqttDisconnect = () => {
         if (client) {
@@ -114,7 +121,7 @@ const HookMqtt = () => {
     
     const mqttSub = () => {
         if (client) {
-            const topic = 'emulador/#'
+            const topic = 'emulador/+/#'
             client.subscribe(topic, 0, (error) => {
                 if (error) {
                     console.log('Subscribe to topics error', error)
@@ -185,7 +192,7 @@ const HookMqtt = () => {
 
     return (
         <>
-            <Title>Alerta Choque</Title>
+            <Title style={{color:'#FFFFFF', fontSize: '100px', padding: '0 50px'}}>Alerta Choque</Title>
             <Connection connect={mqttConnect} disconnect={mqttDisconnect} connectBtn={connectStatus} />
             {/*<QosOption.Provider value={qosOption}>
                 <Subscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />

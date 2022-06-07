@@ -6,7 +6,7 @@ import {
     LineChart,
     XAxis,
     YAxis,
-  } from 'recharts';
+} from 'recharts';
 
 const Receiver = ({ payload }) => {
 
@@ -16,13 +16,18 @@ const Receiver = ({ payload }) => {
         if (payload.topic) {            
             setMessages(messages => [...messages, payload])
         }
+        console.log(messages);
     }, [payload]);
       
-    const renderListItem = (item) => (           
+    const renderListItem = (item) => (
         <List.Item>
             <List.Item.Meta
-                title = 'Aceleración'
+                title = 'Aceleracion'
                 description = {item.acceleration}
+            />
+            <List.Item.Meta
+                title = 'Pasos'
+                description = {item.pointPlotted}
             />
         </List.Item>
     )
@@ -31,17 +36,19 @@ const Receiver = ({ payload }) => {
         setMessages([]);
     }
 
-    return (        
+    return (                
         <Card
-            title="Receiver"
-        >   
-            <LineChart width={ 700 } height={ 500 } data={ messages }>
-                <XAxis                   
-                    dataKey="pointPlotted"/>
-                <YAxis 
-                    label={{ value: 'Aceleración', angle: -90, position: 'insideLeft' }} />
-                <Line dataKey="acceleration" />
-            </LineChart>
+            title= {payload.topic !==undefined ? `Sensor: ${payload.client}` : 'Sensor aceleración'}
+        >  
+            <div style={{paddingBottom: '30px'}}>
+                <LineChart width={ 700 } height={ 500 } data={ messages }>
+                    <XAxis                   
+                        dataKey="pointPlotted"/>
+                    <YAxis 
+                        label={{ value: 'Aceleración', angle: -90, position: 'insideLeft' }} />
+                    <Line dataKey="acceleration" />
+                </LineChart>
+            </div>
             <div
                 id="scrollableDiv"
                 style={{
@@ -59,15 +66,17 @@ const Receiver = ({ payload }) => {
                 >
                     <List                
                         bodyStyle={{overflowX: 'scroll'}}
-                        size="large"
-                        bordered
+                        size="small"
                         dataSource={messages}
                         renderItem={renderListItem}
                     />  
                 </InfiniteScroll>    
-            </div>    
-            <Button type="primary" onClick={cleanData}>Limpiar datos</Button>                
+            </div> 
+            <div style={{paddingTop: '30px', paddingLeft: '20px'}}>
+                <Button type="primary" onClick={cleanData}>Limpiar datos</Button>   
+            </div>         
         </Card>
+        
     );
 }
 

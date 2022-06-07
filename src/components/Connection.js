@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button } from 'antd';
+import { Card, Button, Row, Col } from 'antd';
 
 const Connection = ({ connect, disconnect, connectBtn }) => {
       
@@ -15,7 +15,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
       will: {
         topic: 'Connection Will',
         payload: 'Connection Closed abnormally..!',
-        qos: 0,
+        qos: 2,
         retain: false
       },
       rejectUnauthorized: false
@@ -35,8 +35,14 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
     <Card
       title="Conexión a servidor mqtt"
     > 
-      <Button type="primary" onClick={handleConnect}>{connectBtn}</Button>
-      <Button danger onClick={handleDisconnect}>Desconectar</Button>
+      <Row>
+        <Col span={12}>
+          <Button type="primary" onClick={handleConnect}>{connectBtn}</Button>
+        </Col>
+        <Col span={12}>
+          <Button danger onClick={handleDisconnect}>Desconectar</Button>
+        </Col>
+      </Row>
     </Card>
   );
 }
