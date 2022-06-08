@@ -85,7 +85,7 @@ const HookMqtt = () => {
                 
                 if(acceleration !== undefined && step !== undefined){
                     if(acceleration.aceleracion>=25){
-                        alertCrashCar();
+                        alertCrashCar(extractClient(topic));
                     }
                     const payload = { 
                         topic, 
@@ -146,9 +146,9 @@ const HookMqtt = () => {
         }
     };
 
-    const mqttPublish = (value) => {
+    const mqttPublish = (value, clientid) => {
         if (client) {
-            const topic = "cliente/respuesta";
+            const topic = `cliente/${clientid}/respuesta`;
             const payload = value;
             
             client.publish(topic, payload, 0, error => {
@@ -159,7 +159,7 @@ const HookMqtt = () => {
         }
     };
 
-    const alertCrashCar = () =>{
+    const alertCrashCar = (clientid) => {
         Swal.fire({
             title: "ACABAN DE CHOCAR",
             input: 'text',
@@ -172,7 +172,7 @@ const HookMqtt = () => {
               if (!value) {
                 return '¡Necesitas escribir un mensaje!'
               }
-              mqttPublish(value);
+              mqttPublish(value, clientid);
             }
         })
         .then((willDelete) => {
@@ -188,7 +188,7 @@ const HookMqtt = () => {
                 }); 
             }
         });
-    }
+    };
 
     return (
         <>
